@@ -58,7 +58,8 @@ def visualize(points_in, points_out, function):
         plt.plot(x, test_function(x), color='blue')
     elif function == FunctionType.MAIN:
         plt.plot(x, main_function(x), color='blue')
-    plt.show()
+        plt.show()
+
 
 # Calculate the absolute and relative error between the estimated and exact values
 def calculate_error(estimated_value, exact_value):
@@ -71,12 +72,12 @@ n = 2000  # Number of points to use for Monte Carlo integration
 
 # Calculate the exact value of the test function integral
 exact_test_value = (upper_bound ** 3 - lower_bound ** 3) / 3
-# Perform Monte Carlo integration for the test function
+# Perform Monte Carlo integration for test function
 estimated_test_value, points_test_in, points_test_out = monte_carlo_integration(n, FunctionType.TEST)
-# Calculate the error between the estimated and exact values
+# Calculate th error between the estimated and exact values
 absolute_error_test, relative_error_test = calculate_error(estimated_test_value, exact_test_value)
 
-# Print the results for the test function
+# Print the result for the test function
 print("Test function.")
 print(f"Exact integral value: {exact_test_value}")
 print(f"Monte Carlo integration value: {estimated_test_value}")
@@ -88,9 +89,9 @@ visualize(points_test_in, points_test_out, FunctionType.TEST)
 
 # Calculate the exact value of the main function integral
 exact_main_value = np.sqrt(np.pi) / 2 * (scipy.special.erfi(upper_bound) - scipy.special.erfi(lower_bound))
-# Perform Monte Carlo integration for the main function
+# Perform Monte Carlo integration for main function
 estimated_main_value, points_main_in, points_main_out = monte_carlo_integration(n, FunctionType.MAIN)
-# Calculate the error between the estimated and exact values
+# Calculate th error between the estimated and exact values
 absolute_error_main, relative_error_main = calculate_error(estimated_main_value, exact_main_value)
 
 # Print the results for the main function
