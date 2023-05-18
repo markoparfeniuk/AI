@@ -40,30 +40,43 @@ def k_means_clustering(X, n_clusters=3):
         error = new_error
     return labels
 
-# ART1 clustering algorithm
-def art1_clustering(X, rho=0.5, n_clusters=3):
-    # Initialize weights
-    W = np.random.rand(n_clusters, X.shape[1])
+# Hierarchical clustering algorithm
+def hierarchical_clustering(X, n_clusters=3):
+    # Compute the distance matrix
+    dist_matrix = np.zeros((X.shape[0], X.shape[0]))
+    for i in range(X.shape[0]):
+        for j in range(X.shape[0]):
+            dist_matrix[i, j] = np.linalg.norm(X[i] - X[j])
     # Initialize clusters
-    clusters = np.zeros(X.shape[0], dtype=int)
-    # Initialize number of iterations
-    n_iter = 0
-    # Repeat until convergence
-    while True:
-        n_iter += 1
-        for i in range(X.shape[0]):
-            x = X[i]
-            # Compute activations
-            a = np.dot(W, x) / (rho + np.sum(W, axis=1))
-            # Find the winning cluster
-            j = np.argmax(a)
-            # Update the weights of the winning cluster
-            W[j] = rho * W[j] + (1 - rho) * x
-            # Assign the pattern to the winning cluster
-            clusters[i] = j
-        if n_iter > 500:
-            break
-    return clusters
+    clusters = [[i] for i in range(X.shape[0])]
+    # Perform agglomerative clustering
+    for k in range(X.shape[0] - n_clusters):
+        # Find the two closest clusters
+        min_dist = float('inf')
+        min_i = 0
+        min_j = 0
+        for i in range(len(clusters)):
+            for j in range(i + 1, len(clusters)):
+                # Compute the distance between clusters i and j
+                dist = 0
+                for a in clusters[i]:
+                    for b in clusters[j]:
+                        dist += dist_matrix[a, b]
+                dist /= len(clusters[i]) * len(clusters[j])
+                # Update min_dist, min_i, and min_j
+                if dist < min_dist:
+                    min_dist = dist
+                    min_i = i
+                    min_j = j
+        # Merge the two closest clusters
+        clusters[min_i].extend(clusters[min_j])
+        del clusters[min_j]
+    # Assign each data point to a cluster
+    labels = np.zeros(X.shape[0], dtype=int) # change this line to create an array of type int64 instead of float64
+    for i in range(n_clusters):
+        for j in clusters[i]:
+            labels[j] = i
+    return labels
 
 # Calculate the average size of clusters
 def avg_cluster_size(X, labels):
@@ -84,28 +97,28 @@ def avg_cluster_size(X, labels):
 # Generate a test sequence of 1000 2D points
 X = generate_test_sequence(1000)
 
-# Apply K-Means and ART1 clustering algorithms to the test sequence
+# Apply K-Means and agglomerative clustering algorithms to the test sequence
 k_means_labels = k_means_clustering(X)
-art1_labels = art1_clustering(X)
+hierarchical_labels = hierarchical_clustering(X)
 
 # Calculate the average size of clusters found by each algorithm
 k_means_size = avg_cluster_size(X, k_means_labels)
-art1_size = avg_cluster_size(X, art1_labels)
+hierarchical_size = avg_cluster_size(X, hierarchical_labels)
 
 # Print the results of K-Means clustering
 print("K-Means Clustering Results:")
 print("Number of Clusters:", len(np.unique(k_means_labels)))
 print("Average Cluster Size:", k_means_size)
-# Print the results of ART1 clustering
-print("\nART1 Clustering Results:")
-print("Number of Clusters:", len(np.unique(art1_labels)))
-print("Average Cluster Size:", art1_size)
+# Print the results of Agglomerative clustering
+print("\nAgglomerative Clustering Results:")
+print("Number of Clusters:", len(np.unique(hierarchical_labels)))
+print("Average Cluster Size:", hierarchical_size)
 
 fig, axs = plt.subplots(1, 2)
 # Plot the test sequence with points colored by their K-Means cluster labels
 axs[0].scatter(X[:, 0], X[:, 1], c=k_means_labels)
 axs[0].set_title('K-Means Clustering')
-# Plot the test sequence with points colored by their ART1 cluster labels
-axs[1].scatter(X[:, 0], X[:, 1], c=art1_labels)
-axs[1].set_title('ART1 Clustering')
+# Plot the test sequence with points colored by their agglomerative cluster labels
+axs[1].scatter(X[:, 0], X[:, 1], c=hierarchical_labels)
+axs[1].set_title('Agglomerative Clustering')
 plt.show()
