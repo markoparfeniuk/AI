@@ -1,0 +1,33 @@
+{
+    "lessons": {
+        "Math": {
+            "count": 4,
+            "teacher": "Ms. Smith"
+        },
+        "English": {
+            "count": 4,
+            "teacher": "Mr. Johnson"
+        },
+        "Science": {
+            "count": 3,
+            "teacher": "Ms. Lee"
+        },
+        "History": {
+            "count": 3,
+            "teacher": "Mr. Brown"
+        },
+        "Physical Education": {
+            "count": 2,
+            "teacher": "Coach Davis",
+            "room": "Gym"
+        },
+        "Music": {
+            "count": 2,
+            "teacher": "Ms. Garcia",
+            "room": "Music Room"
+        }
+    },
+    "teachers": ["Ms. Smith", "Mr. Johnson", "Ms. Lee", "Mr. Brown", "Coach Davis", "Ms. Garcia"],
+    "classes": ["Class 1", "Class 2"],
+    "rooms": ["Classroom 1", "Classroom 2", "Gym", "Music Room"]
+}
