@@ -1,6 +1,6 @@
 import random
 import json
-from prettytable import PrettyTable
+import prettytable
 
 # Constants
 NUM_LESSONS = 6
@@ -20,21 +20,26 @@ with open('data.json', 'r') as f:
 # Define the schedule class
 class Schedule:
     def __init__(self):
-        self.schedule = [[[None for _ in range(MAX_LESSONS_PER_DAY)] for _ in range(NUM_DAYS)] for _ in
-                         range(NUM_CLASSES)]
+        self.schedule = [[[None for _ in range(MAX_LESSONS_PER_DAY)] for _ in range(NUM_DAYS)] for _ in range(NUM_CLASSES)]
 
     def __str__(self):
         result = ''
         for c in range(NUM_CLASSES):
-            result += f'Class {c + 1}:\n'
+            result += f'\n{classes[c]}:\n'
+            table = prettytable.PrettyTable()
+            table.hrules = prettytable.ALL
+            table.field_names = ["Day", "Lesson 1", "Lesson 2", "Lesson 3", "Lesson 4", "Lesson 5"]
             for d in range(NUM_DAYS):
-                result += f'Day {d + 1}: '
+                row = [f'Day {d+1}']
                 for p in range(MAX_LESSONS_PER_DAY):
                     lesson = self.schedule[c][d][p]
                     if lesson is not None:
-                        result += f'{lesson} '
-                result += '\n'
-            result += '\n'
+                        teacher = lessons[lesson]['teacher']
+                        row.append(f'{lesson}\n{teacher}')
+                    else:
+                        row.append('')
+                table.add_row(row)
+            result += str(table) + '\n'
         return result
 
     def fitness(self):
@@ -112,25 +117,6 @@ class Schedule:
         p1 = random.randint(0, MAX_LESSONS_PER_DAY - 1)
         p2 = random.randint(0, MAX_LESSONS_PER_DAY - 1)
         self.schedule[c][d][p1], self.schedule[c][d][p2] = self.schedule[c][d][p2], self.schedule[c][d][p1]
-
-    def __str__(self):
-        result = ''
-        for c in range(NUM_CLASSES):
-            result += f'Class {c+1}:\n'
-            table = PrettyTable()
-            table.field_names = ["Day", "Lesson 1", "Lesson 2", "Lesson 3", "Lesson 4", "Lesson 5"]
-            for d in range(NUM_DAYS):
-                row = [f'Day {d+1}']
-                for p in range(MAX_LESSONS_PER_DAY):
-                    lesson = self.schedule[c][d][p]
-                    if lesson is not None:
-                        teacher = lessons[lesson]['teacher']
-                        row.append(f'{lesson}\n{teacher}')
-                    else:
-                        row.append('')
-                table.add_row(row)
-            result += str(table) + '\n\n'
-        return result
 
 # Genetic algorithm
 def genetic_algorithm(population_size=100, num_generations=1000, mutation_rate=0.01):
